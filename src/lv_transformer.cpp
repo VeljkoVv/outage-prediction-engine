@@ -4,7 +4,6 @@
 LV_Transformer::LV_Transformer() {}
 LV_Transformer::LV_Transformer(int id, std::string& name) : transformer_id(id), transformer_name(name) {}
 LV_Transformer::LV_Transformer(int id, std::string& name, std::vector<LV_Feeder>& feeders) : transformer_id(id), transformer_name(name), feeders(feeders) {}
-LV_Transformer::LV_Transformer(const LV_Transformer& transformer) : transformer_id(transformer.transformer_id), transformer_name(transformer.transformer_name), feeders(transformer.feeders) {}
         
 void LV_Transformer::setId(int id) {transformer_id = id;}
 void LV_Transformer::setName(std::string& name) {transformer_name = name;}

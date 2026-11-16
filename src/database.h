@@ -7,6 +7,7 @@ class Database{
         Database(const std::string& path);
         Database(sqlite3* db);
 
+        
 
     private:
         sqlite3* db_p = nullptr;

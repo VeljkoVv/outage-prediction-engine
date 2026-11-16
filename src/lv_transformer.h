@@ -8,7 +8,6 @@ class LV_Transformer{
         LV_Transformer();
         LV_Transformer(int id, std::string& name);
         LV_Transformer(int id, std::string& name, std::vector<LV_Feeder>& feeders);
-        LV_Transformer(const LV_Transformer& transformer);
         
 
         void setId(int id);
