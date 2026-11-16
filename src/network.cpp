@@ -1,5 +1,31 @@
 #include "network.h"
 
+void Network::loadNetwork(Database& db){
+    setTransformer(db.loadTransformer());
+
+    for(const auto& f : db.loadFeeders()){
+        addFeeder(f);
+    }
+    for(const auto& sp : db.loadServicePoints()){
+        addServicePoint(sp);
+    }
+    for(const auto& sdp : db.loadServiceDeliveryPoints()){
+        addSdp(sdp);
+    }
+}
+
+void Network::buildIndexes() {
+    points_of_feeder.clear();
+    sdps_of_point.clear();
+
+    for (const auto& [id, sp] : service_points) {
+        points_of_feeder[sp.getFeederId()].push_back(id);
+    }
+    for (const auto& [id, sdp] : delivery_points) {
+        sdps_of_point[sdp.getPointId()].push_back(id);
+    }
+}
+
 void Network::setTransformer(const LV_Transformer& t){
     transformer = t;
 }      

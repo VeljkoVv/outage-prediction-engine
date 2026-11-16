@@ -3,6 +3,7 @@
 #include "lv_transformer.h"
 #include "service_point.h"
 #include "service_delivery_point.h"
+#include "database.h"
 #include <map>
 #include <vector>
 
@@ -19,13 +20,15 @@ class Network{
         const Service_Point& getServicePoint(int id) const;
         const Service_Delivery_Point& getSdp(int id) const;
 
+        void loadNetwork(Database& db);
+        void buildIndexes();
+
     private:
         LV_Transformer transformer;
         std::map<int, LV_Feeder> feeders;
         std::map<int, Service_Point> service_points;
         std::map<int, Service_Delivery_Point> delivery_points;
 
-        std::map<int, std::vector<LV_Feeder>> feeders_of_transformer;
-        std::map<int, std::vector<Service_Point>> points_of_feeder;
-        std::map<int, std::vector<Service_Delivery_Point>> sdp_of_points;
+        std::map<int, std::vector<int>> points_of_feeder;
+        std::map<int, std::vector<int>> sdps_of_point;
 };
