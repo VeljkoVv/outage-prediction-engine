@@ -15,12 +15,14 @@ Trouble_Call::Trouble_Call(int id, int dp_id, CallType t, TimePoint tp, CallStat
       status(s) {}
 
     int Trouble_Call::getId() const { return id; }
+    int Trouble_Call::getOutageId() const { return outage_id; }
     int Trouble_Call::getDeliveryPointId() const { return delivery_point_id; }
     CallType Trouble_Call::getType() const { return type; }
     Trouble_Call::TimePoint Trouble_Call::getReceivedAt() const { return received_at; }
     CallStatus Trouble_Call::getStatus() const { return status; }
 
     void Trouble_Call::setDeliveryPointId(int value) { delivery_point_id = value; }
+    void Trouble_Call::setOutageId(int value) { outage_id = value; }
     void Trouble_Call::setType(CallType value) { type = value; }
     void Trouble_Call::setReceivedAt(TimePoint value) { received_at = value; }
     void Trouble_Call::setStatus(CallStatus value) { status = value; }

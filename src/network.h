@@ -4,8 +4,9 @@
 #include "service_point.h"
 #include "service_delivery_point.h"
 #include "database.h"
-#include <map>
+#include <unordered_map>
 #include <vector>
+
 
 
 class Network{
@@ -25,10 +26,10 @@ class Network{
 
     private:
         LV_Transformer transformer;
-        std::map<int, LV_Feeder> feeders;
-        std::map<int, Service_Point> service_points;
-        std::map<int, Service_Delivery_Point> delivery_points;
+        std::unordered_map<int, LV_Feeder> feeders;
+        std::unordered_map<int, Service_Point> service_points;
+        std::unordered_map<int, Service_Delivery_Point> delivery_points;
 
-        std::map<int, std::vector<int>> points_of_feeder;
-        std::map<int, std::vector<int>> sdps_of_point;
+        std::unordered_map<int, std::vector<int>> points_of_feeder;
+        std::unordered_map<int, std::vector<int>> sdps_of_point;
 };

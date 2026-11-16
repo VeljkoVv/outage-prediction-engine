@@ -1,4 +1,6 @@
 #include "network.h"
+#include <stdexcept>
+
 
 void Network::loadNetwork(Database& db){
     setTransformer(db.loadTransformer());
@@ -43,11 +45,23 @@ const LV_Transformer& Network::getTransformer() const{
     return transformer;
 }
 const LV_Feeder& Network::getFeeder(int id) const{
-    return feeders.at(id);
+    auto it = feeders.find(id);
+    if (it == feeders.end()) {
+        throw std::out_of_range("Feeder " + std::to_string(id) + " not found in network");
+    }
+    return it->second;
 }
 const Service_Point& Network::getServicePoint(int id) const{
-    return service_points.at(id);
+    auto it = service_points.find(id);
+    if (it == service_points.end()) {
+        throw std::out_of_range("Service Point " + std::to_string(id) + " not found in network");
+    }
+    return it->second;
 }
 const Service_Delivery_Point& Network::getSdp(int id) const{
-    return delivery_points.at(id);
+    auto it = delivery_points.find(id);
+    if (it == delivery_points.end()) {
+        throw std::out_of_range("Service Delivery Point " + std::to_string(id) + " not found in network");
+    }
+    return it->second;
 }

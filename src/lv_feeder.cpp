@@ -1,7 +1,6 @@
 #include "lv_feeder.h"
 #include "service_point.h"
 
-LV_Feeder::LV_Feeder(){}
 LV_Feeder::LV_Feeder(int id, std::string& name) : feeder_id(id), feeder_name(name) {}
 LV_Feeder::LV_Feeder(const LV_Feeder& feeder) : feeder_id(feeder.feeder_id), feeder_name(feeder.feeder_name) {}
 

@@ -5,7 +5,7 @@
 
 class LV_Feeder{
     public:
-        LV_Feeder();
+        LV_Feeder() = default;
         LV_Feeder(int id, std::string& name);
         LV_Feeder(const LV_Feeder& feeder);
 

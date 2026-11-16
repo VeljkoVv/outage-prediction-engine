@@ -22,20 +22,22 @@ class Trouble_Call{
         Trouble_Call();
         Trouble_Call(int id, int dp_id, CallType t,TimePoint tp, CallStatus s);
         
-
         int getId() const;
+        int getOutageId() const;
         int getDeliveryPointId() const;
         CallType getType() const;
         TimePoint getReceivedAt() const;
         CallStatus getStatus() const;
 
         void setDeliveryPointId(int value);
+        void setOutageId(int value);
         void setType(CallType value);
         void setReceivedAt(TimePoint value);
         void setStatus(CallStatus value);
 
     private:
         int	id;
+        int outage_id;
         int delivery_point_id;
         CallType type;
         TimePoint received_at;

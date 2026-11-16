@@ -20,8 +20,11 @@ ElementType Outage::getType() const { return type; }
 int Outage::getElementId() const { return element_id; }
 OutageStatus Outage::getStatus() const { return status; }
 Outage::TimePoint Outage::getStartedAt() const { return started_at; }
+std::optional<Outage::TimePoint> Outage::getEndedAt() const { return ended_at; }
+
 
 void Outage::setType(ElementType t) { type = t; }
 void Outage::setElementId(int e) { element_id = e; }
 void Outage::setStatus(OutageStatus s) { status = s; }
 void Outage::setStartedAt(TimePoint sa) { started_at = sa; }
+void Outage::setEndedAt(std::optional<TimePoint> ea) { ended_at = ea; }

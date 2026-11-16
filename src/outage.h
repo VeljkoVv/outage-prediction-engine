@@ -1,5 +1,6 @@
 #pragma once
 #include <chrono>
+#include <optional>
 
 enum class ElementType {
     ServicePoint,
@@ -28,11 +29,13 @@ class Outage{
         int getElementId() const;
         OutageStatus getStatus() const;
         TimePoint getStartedAt() const;
+        std::optional<TimePoint> getEndedAt() const;
 
         void setType(ElementType t);
         void setElementId(int e);
         void setStatus(OutageStatus s);
         void setStartedAt(TimePoint sa);
+        void setEndedAt(std::optional<TimePoint> sa);
 
     private:
         int id;
@@ -40,4 +43,5 @@ class Outage{
         int element_id;
         OutageStatus status;
         TimePoint started_at;
+        std::optional<TimePoint> ended_at;
 };
