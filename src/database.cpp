@@ -8,5 +8,8 @@
             throw std::runtime_error("\nError opening DB connection: " + err);
         }
     }
-
     Database::Database(sqlite3* db) : db_p(db) {}
+
+    void Database::LoadElements(){
+        
+    }
