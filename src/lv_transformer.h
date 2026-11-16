@@ -9,7 +9,7 @@ class LV_Transformer{
         LV_Transformer(int id, std::string& name);        
 
         void setId(int id);
-        void setName(std::string& name);
+        void setName(const std::string& name);
 
         int getId() const;
         std::string getName() const;

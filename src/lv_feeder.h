@@ -10,7 +10,7 @@ class LV_Feeder{
         LV_Feeder(const LV_Feeder& feeder);
 
         void setId(int id);
-        void setName(std::string& name);
+        void setName(const std::string& name);
 
         int getId() const;
         std::string getName() const;

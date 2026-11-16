@@ -6,9 +6,11 @@ Service_Delivery_Point::Service_Delivery_Point(int id, std::string& name, std::s
 Service_Delivery_Point::Service_Delivery_Point(const Service_Delivery_Point& points) :  delivery_id(points.delivery_id), delivery_name(points.delivery_name), delivery_adress(points.delivery_adress) {}
 
 void Service_Delivery_Point::setId(int id) {delivery_id = id;}
-void Service_Delivery_Point::setName(std::string& name) {delivery_name = name;}
-void Service_Delivery_Point::setAdress(std::string& adress) {delivery_adress = adress;}
+void Service_Delivery_Point::setPointId(int id) {point_id = id;}
+void Service_Delivery_Point::setName(const std::string& name) {delivery_name = name;}
+void Service_Delivery_Point::setAdress(const std::string& adress) {delivery_adress = adress;}
 
 int Service_Delivery_Point::getId() const {return delivery_id;}
+int Service_Delivery_Point::getPointId() const {return point_id;}
 std::string Service_Delivery_Point::getName() const {return delivery_name;}
 std::string Service_Delivery_Point::getAdress() const {return delivery_adress;}
