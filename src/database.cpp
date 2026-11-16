@@ -9,4 +9,4 @@
         }
     }
 
-    //Database::Database(sqlite3* db){}
+    Database::Database(sqlite3* db) : db_p(db) {}
