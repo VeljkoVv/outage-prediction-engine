@@ -1,6 +1,8 @@
 #pragma once
 #include <chrono>
 #include <optional>
+#include <vector>
+
 
 enum class ElementType {
     ServicePoint,
@@ -24,12 +26,24 @@ class Outage{
         Outage(int id, ElementType type, int element_id,
         OutageStatus status, TimePoint started_at);
         
+        void addCall(int callId);
+        void takeCallsFrom(const Outage& outage);
+    
+        void confirm();
+        void restore(TimePoint at);
+        void cancel();
+
+        bool isOpen() const;
+        bool isConfirmed() const;
+
         int getId() const;
         ElementType getType() const;
         int getElementId() const;
         OutageStatus getStatus() const;
         TimePoint getStartedAt() const;
         std::optional<TimePoint> getEndedAt() const;
+        std::optional<int> getMergedId() const;
+        std::vector<int> getCallIds() const;
 
         void setType(ElementType t);
         void setElementId(int e);
@@ -44,4 +58,6 @@ class Outage{
         OutageStatus status;
         TimePoint started_at;
         std::optional<TimePoint> ended_at;
+        std::optional<int> merged_into_id;
+        std::vector<int> call_ids;
 };

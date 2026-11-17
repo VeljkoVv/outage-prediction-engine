@@ -1,4 +1,5 @@
 #include "trouble_call.h"
+#include <stdexcept>
 
     Trouble_Call::Trouble_Call()
     : id(0),
