@@ -20,7 +20,7 @@ class Trouble_Call{
         using TimePoint = std::chrono::system_clock::time_point;
 
         Trouble_Call();
-        Trouble_Call(int id, int dp_id, CallType t,TimePoint tp, CallStatus s);
+        Trouble_Call(int id, int dp_id, CallType t,TimePoint tp);
         
         void assignTo(int outageId);
         void close();

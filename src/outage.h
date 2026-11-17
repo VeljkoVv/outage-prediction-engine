@@ -23,8 +23,7 @@ class Outage{
         using TimePoint = std::chrono::system_clock::time_point;
         
         Outage();
-        Outage(int id, ElementType type, int element_id,
-        OutageStatus status, TimePoint started_at);
+        Outage(int id, ElementType type, int element_id, TimePoint started_at);
         
         void addCall(int callId);
         void takeCallsFrom(const Outage& outage);
