@@ -28,6 +28,24 @@ void Network::buildIndexes() {
     }
 }
 
+const std::vector<int>& Network::servicePointsOf(int feederId) const{
+    static const std::vector<int> empty;
+    auto it = points_of_feeder.find(feederId);
+    if (it == points_of_feeder.end()) {
+        return empty;
+    }
+    return it->second;
+}
+
+const std::vector<int>& Network::sdpsOf(int servicePointId) const{
+    static const std::vector<int> empty;
+    auto it = sdps_of_point.find(servicePointId);
+    if (it == sdps_of_point.end()) {
+        return empty;
+    }
+    return it->second;
+}
+
 void Network::setTransformer(const LV_Transformer& t){
     transformer = t;
 }      

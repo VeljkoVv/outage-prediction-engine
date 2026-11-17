@@ -10,11 +10,11 @@ Outage::Outage()
       started_at(std::chrono::system_clock::now()){}
 
 Outage::Outage(int id, ElementType type, int element_id,
-               OutageStatus status, TimePoint started_at)
+               TimePoint started_at)
     : id(id),
       type(type),
       element_id(element_id),
-      status(status),
+      status(OutageStatus::Predicted),
       started_at(started_at){}
 
 void Outage::addCall(int callId){

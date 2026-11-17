@@ -7,8 +7,6 @@
 #include <unordered_map>
 #include <vector>
 
-
-
 class Network{
     public:
         void setTransformer(const LV_Transformer& t);       
@@ -23,6 +21,8 @@ class Network{
 
         void loadNetwork(Database& db);
         void buildIndexes();
+        const std::vector<int>& servicePointsOf(int feederId) const;
+        const std::vector<int>& sdpsOf(int servicePointId) const;
 
     private:
         LV_Transformer transformer;
