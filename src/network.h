@@ -19,6 +19,10 @@ class Network{
         const Service_Point& getServicePoint(int id) const;
         const Service_Delivery_Point& getSdp(int id) const;
 
+        int feederCount() const;
+        int servicePointCount() const;
+        int sdpCount() const;
+
         void loadNetwork(Database& db);
         void buildIndexes();
         const std::vector<int>& servicePointsOf(int feederId) const;
@@ -32,4 +36,6 @@ class Network{
 
         std::unordered_map<int, std::vector<int>> points_of_feeder;
         std::unordered_map<int, std::vector<int>> sdps_of_point;
+
+
 };

@@ -28,6 +28,18 @@ void Network::buildIndexes() {
     }
 }
 
+int Network::feederCount() const {
+    return feeders.size();
+}
+
+int Network::servicePointCount() const {
+    return service_points.size();
+}
+
+int Network::sdpCount() const {
+    return delivery_points.size();
+}
+
 const std::vector<int>& Network::servicePointsOf(int feederId) const{
     static const std::vector<int> empty;
     auto it = points_of_feeder.find(feederId);
