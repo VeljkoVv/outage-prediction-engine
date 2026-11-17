@@ -22,6 +22,14 @@ class Trouble_Call{
         Trouble_Call();
         Trouble_Call(int id, int dp_id, CallType t,TimePoint tp, CallStatus s);
         
+        void assignTo(int outageId);
+        void close();
+        void cancel();
+
+        bool isOpen() const;
+        bool causesOutage() const;
+        bool isEmergency() const;
+
         int getId() const;
         int getOutageId() const;
         int getDeliveryPointId() const;
