@@ -21,7 +21,7 @@ class Trouble_Call{
 
         Trouble_Call();
         Trouble_Call(int id, int dp_id, CallType t,TimePoint tp);
-        
+
         void assignTo(int outageId);
         void close();
         void cancel();

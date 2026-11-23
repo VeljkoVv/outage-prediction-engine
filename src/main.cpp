@@ -6,11 +6,11 @@
 int main(){
     Database db("db/outage-prediction.db");
     Network net;
-    net.loadNetwork(db);
-    Predictor_Engine p;
+    PredictorEngine p(net);
 
+    net.loadNetwork(db);
     Menu m( p, net);
-    m.startMenu();
+    m.runMenu();
 
     return 0;
 }
