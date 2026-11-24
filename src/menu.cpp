@@ -53,8 +53,29 @@ void Menu::handleChoice(int choice){
     }
 }
 
-void Menu::showNetwork(){
+std::string Menu::outageTag(ElementType type, int id) const {
+    if (auto o = engine.findOpenOutage(type, id)) {
+        return "  [OUTAGE #" + std::to_string(*o) + "]";
+    }
+    return "";
+}
 
+void Menu::showNetwork(){
+    std::cout << network.getTransformer().getName() << " (" << network.getTransformer().getId() << ")" 
+                                                    << outageTag(ElementType::Transformer, network.getTransformer().getId()) << std::endl;
+
+    for (const auto& [feederId, feeder] : network.getFeeders()) {
+        std::cout << " \t" << feeder.getName() << " (" << feederId << ")" 
+                           << outageTag(ElementType::Feeder, feederId) << std::endl;
+
+        for (int spId : network.servicePointsOf(feederId)) {
+            std::cout << "\t\t" << network.getServicePoint(spId).getName() << " (" << spId << ")" 
+                                << outageTag(ElementType::ServicePoint, spId) << std::endl;
+            for (int sdpId : network.sdpsOf(spId)) {
+                std::cout << "\t\t\t" << network.getSdp(sdpId).getName() << " (" << sdpId << ")" << std::endl;
+            }
+        }
+    }
 }
 void Menu::troubleCall(){
     std::cout << "-------------------------------------------------------" << std::endl;
