@@ -18,6 +18,7 @@ class Network{
         const LV_Feeder& getFeeder(int id) const;
         const Service_Point& getServicePoint(int id) const;
         const Service_Delivery_Point& getSdp(int id) const;
+        const std::unordered_map<int, LV_Feeder>& getFeeders() const;
 
         int feederCount() const;
         int servicePointCount() const;

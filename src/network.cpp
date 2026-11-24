@@ -95,3 +95,6 @@ const Service_Delivery_Point& Network::getSdp(int id) const{
     }
     return it->second;
 }
+const std::unordered_map<int, LV_Feeder>& Network::getFeeders() const {
+    return feeders;
+}

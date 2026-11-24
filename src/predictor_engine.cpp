@@ -55,7 +55,7 @@ void PredictorEngine::tryRollUpFeeder(int id){
     std::vector<int> spOutages;
     for(const auto& a : network.servicePointsOf(id)){
         std::optional<int> outageId = findOpenOutage(ElementType::ServicePoint, a);
-        if(outageId){
+        if (outageId && !outages.at(*outageId).isConfirmed()) {
             spOutages.push_back(*outageId);
         }
     }
@@ -88,7 +88,37 @@ void PredictorEngine::tryRollUpFeeder(int id){
 }
 
 void PredictorEngine::tryRollUpTransformer(){
+    std::vector<int> feederOutages;
+    for(const auto& [feederId, feeder] : network.getFeeders()){
+        std::optional<int> outageId = findOpenOutage(ElementType::Feeder, feederId);
+        if (outageId && !outages.at(*outageId).isConfirmed()) {
+            feederOutages.push_back(*outageId);
+        }
+    }
+    if(feederOutages.size() < 2){
+        return;
+    }
+    
+    Outage::TimePoint start = outages.at(feederOutages.at(0)).getStartedAt();
+    for (int feederOutageId : feederOutages) {
+        Outage::TimePoint t = outages.at(feederOutageId).getStartedAt();
+        if (t < start) {
+            start = t;
+        }
+    }
 
+    int transformerOutageId = createOutage(ElementType::Transformer, network.getTransformer().getId(), start);
+    Outage& transformerOutage = outages.at(transformerOutageId);
+
+    for (int feederOutageId : feederOutages) {
+        Outage& feederOutage = outages.at(feederOutageId);
+
+        transformerOutage.takeCallsFrom(feederOutage);
+        for (int callId : feederOutage.getCallIds()) {
+            calls.at(callId).assignTo(transformerOutageId);
+        }
+        feederOutage.mergeInto(transformerOutageId);
+    }
 }
 
 std::optional<int> PredictorEngine::findOpenOutage(ElementType type, int elementId) const {
