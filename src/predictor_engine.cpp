@@ -121,6 +121,26 @@ void PredictorEngine::tryRollUpTransformer(){
     }
 }
 
+int PredictorEngine::openOutageCount() const {
+    int count = 0;
+    for (const auto& [id, outage] : outages) {
+        if (outage.isOpen()) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int PredictorEngine::openCallCount() const {
+    int count = 0;
+    for (const auto& [id, call] : calls) {
+        if (call.isOpen()) {
+            count++;
+        }
+    }
+    return count;
+}
+
 std::optional<int> PredictorEngine::findOpenOutage(ElementType type, int elementId) const {
     for (const auto& [id, outage] : outages) {
         if (outage.isOpen() && outage.getType() == type && outage.getElementId() == elementId) {
@@ -142,4 +162,12 @@ void PredictorEngine::alertDispatch(int callId) {
 
 const std::vector<int>& PredictorEngine::getEmergencies() const {
     return emergencies;
+}
+
+const std::unordered_map<int, Outage>& PredictorEngine::getOutages() const{
+    return outages;
+}
+
+const Outage& PredictorEngine::getOutage(int id) const{
+    return outages.at(id);
 }

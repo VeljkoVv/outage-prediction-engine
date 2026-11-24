@@ -40,6 +40,24 @@ int Network::sdpCount() const {
     return delivery_points.size();
 }
 
+int Network::customersUnder(const Outage& outage) const{
+    int count = 0;
+    switch(outage.getType()){
+        case ElementType::ServicePoint:
+            count = sdpsOf(outage.getElementId()).size();
+            break;
+        case ElementType::Feeder:
+            for(const auto& a : servicePointsOf(outage.getElementId())){
+                count += sdpsOf(a).size();
+            }
+            break;
+        default:
+            count = sdpCount();
+            break;
+    }
+    return count;
+}
+
 const std::vector<int>& Network::servicePointsOf(int feederId) const{
     static const std::vector<int> empty;
     auto it = points_of_feeder.find(feederId);

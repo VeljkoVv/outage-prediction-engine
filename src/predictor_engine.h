@@ -13,12 +13,16 @@ public:
     void tryRollUpFeeder(int id);
     void tryRollUpTransformer();
 
+    int openOutageCount() const;
+    int openCallCount() const;
 
     std::optional<int> findOpenOutage(ElementType type, int elementId) const;
     int createOutage(ElementType type, int elementId, Outage::TimePoint startedAt);
 
     void alertDispatch(int callId);
     const std::vector<int>& getEmergencies() const;
+    const std::unordered_map<int, Outage>& getOutages() const;
+    const Outage& getOutage(int id) const;
 
 private:
    

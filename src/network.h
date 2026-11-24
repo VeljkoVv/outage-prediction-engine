@@ -4,6 +4,7 @@
 #include "service_point.h"
 #include "service_delivery_point.h"
 #include "database.h"
+#include "outage.h"
 #include <unordered_map>
 #include <vector>
 
@@ -23,6 +24,7 @@ class Network{
         int feederCount() const;
         int servicePointCount() const;
         int sdpCount() const;
+        int customersUnder(const Outage& outage) const;
 
         void loadNetwork(Database& db);
         void buildIndexes();

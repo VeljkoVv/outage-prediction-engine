@@ -2,6 +2,8 @@
 #include "trouble_call.h"
 #include <iostream>
 #include <chrono>
+#include <ctime>
+#include <iomanip>
 
 
 Menu::Menu(PredictorEngine& eng, const Network& net) : engine(eng), network(net) {}
@@ -92,7 +94,51 @@ CallType Menu::callType() {
 }
 
 void Menu::showOutages(){
-
+    if(engine.openOutageCount() == 0){
+        std::cout << "No open outages" << std::endl;
+        return;
+    }
+    std::cout << "--- Open outages( " << engine.openOutageCount() << ") ---" << std::endl;
+    std::cout << "ID \tElement \t\tStatus \t\tCalls \tCustomers \tStarted at" << std::endl;
+    for(const auto& [id, outage] : engine.getOutages()){
+        if (!outage.isOpen()) {
+            continue;
+        }
+        std::cout << outage.getId();
+            switch(outage.getType()){
+                case ElementType::ServicePoint:
+                    std::cout << "\tService Point ";
+                    break;
+                case ElementType::Feeder:
+                    std::cout << "\tFeeder ";
+                    break;
+                default:
+                    std::cout << "\tTransformer ";
+                    break;
+            }
+        std::cout << outage.getElementId();
+        switch(outage.getStatus()){
+            case OutageStatus::Cancelled:
+                std::cout << "\tCancelled";
+                break;
+            case OutageStatus::Confirmed:
+                std::cout << "\tConfirmed";
+                break;
+            case OutageStatus::Merged:
+                std::cout << "\tMerged";
+                break;
+            case OutageStatus::Predicted:
+                std::cout << "\tPredicted";
+                break;
+            default:
+                std::cout << "\tRestored";
+                break;
+        }
+        std::time_t start = std::chrono::system_clock::to_time_t(outage.getStartedAt());
+        std::cout << "\t" << outage.getCallIds().size() 
+                  << "\t" << network.customersUnder(outage) 
+                  << "\t\t" << std::put_time(std::localtime(&start), "%H:%M") << std::endl;
+    }
 }
 void Menu::confirmOutage(){
 
@@ -108,8 +154,8 @@ void Menu::startMenu(){
     std::cout << "Feeders: " << network.feederCount() 
               << "\tService points: " << network.servicePointCount()
               << "\tCustomers: " << network.sdpCount() << std::endl;
-    std::cout << "Open outages: "  
-              << "\tOpen calls: " << std::endl;
+    std::cout << "Open outages: " << engine.openOutageCount()
+              << "\tOpen calls: " << engine.openCallCount() << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "1. Show network" << std::endl;
     std::cout << "2. New trouble call" << std::endl;
