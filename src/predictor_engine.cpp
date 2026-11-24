@@ -131,6 +131,16 @@ int PredictorEngine::openOutageCount() const {
     return count;
 }
 
+int PredictorEngine::predictedOutageCount() const {
+    int count = 0;
+    for (const auto& [id, outage] : outages) {
+        if (outage.isOpen() && outage.getStatus() == OutageStatus::Predicted) {
+            count++;
+        }
+    }
+    return count;
+}
+
 int PredictorEngine::openCallCount() const {
     int count = 0;
     for (const auto& [id, call] : calls) {
@@ -139,6 +149,14 @@ int PredictorEngine::openCallCount() const {
         }
     }
     return count;
+}
+
+void PredictorEngine::confirmOutage(int id) {
+    auto it = outages.find(id);
+    if (it == outages.end()) {
+        throw std::out_of_range("Outage " + std::to_string(id) + " not found");
+    }
+    it->second.confirm();
 }
 
 std::optional<int> PredictorEngine::findOpenOutage(ElementType type, int elementId) const {

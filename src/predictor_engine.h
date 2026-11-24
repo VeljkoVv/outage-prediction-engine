@@ -14,7 +14,9 @@ public:
     void tryRollUpTransformer();
 
     int openOutageCount() const;
+    int predictedOutageCount() const;
     int openCallCount() const;
+    void confirmOutage(int id);
 
     std::optional<int> findOpenOutage(ElementType type, int elementId) const;
     int createOutage(ElementType type, int elementId, Outage::TimePoint startedAt);

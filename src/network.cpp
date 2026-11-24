@@ -14,6 +14,7 @@ void Network::loadNetwork(Database& db){
     for(const auto& sdp : db.loadServiceDeliveryPoints()){
         addSdp(sdp);
     }
+    buildIndexes();
 }
 
 void Network::buildIndexes() {

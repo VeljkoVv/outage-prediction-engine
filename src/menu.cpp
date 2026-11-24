@@ -69,7 +69,7 @@ void Menu::troubleCall(){
 }
 
 CallType Menu::callType() {
-    std::cout << "Call type:\n"
+    std::cout << "\nCall type:\n"
               << "1. No power\n"
               << "2. Partial power\n"
               << "3. Flickering\n"
@@ -95,13 +95,26 @@ CallType Menu::callType() {
 
 void Menu::showOutages(){
     if(engine.openOutageCount() == 0){
-        std::cout << "No open outages" << std::endl;
+        std::cout << "\nNo open outages" << std::endl;
         return;
     }
-    std::cout << "--- Open outages( " << engine.openOutageCount() << ") ---" << std::endl;
+    printOutages(false);
+}
+
+void Menu::printOutages(bool isPredicted){
+    int count;
+    if(isPredicted){
+        count = engine.predictedOutageCount();
+    } else{
+        count = engine.openOutageCount();
+    }
+    std::cout << "--- Outages (" << count << ") ---" << std::endl;
     std::cout << "ID \tElement \t\tStatus \t\tCalls \tCustomers \tStarted at" << std::endl;
     for(const auto& [id, outage] : engine.getOutages()){
         if (!outage.isOpen()) {
+            continue;
+        }
+        if (isPredicted && outage.getStatus() != OutageStatus::Predicted) {
             continue;
         }
         std::cout << outage.getId();
@@ -140,9 +153,24 @@ void Menu::showOutages(){
                   << "\t\t" << std::put_time(std::localtime(&start), "%H:%M") << std::endl;
     }
 }
-void Menu::confirmOutage(){
 
+void Menu::confirmOutage(){
+    if (engine.predictedOutageCount() == 0) {
+        std::cout << "\nNo outages to confirm" << std::endl;
+        return;
+    }
+    printOutages(true);
+    
+    std::cout << "Type ID to confirm (0 to go back): ";
+    int choice;
+    std::cin >> choice;
+    if(choice == 0){
+        return;
+    }
+    engine.confirmOutage(choice);
+    std::cout << "Outage " << choice << " confirmed." << std::endl;
 }
+
 void Menu::restorePower(){
 
 }

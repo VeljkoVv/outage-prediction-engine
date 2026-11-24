@@ -17,6 +17,7 @@ class Menu{
         void confirmOutage();
         void restorePower();
 
+        void printOutages(bool isPredicted);
         CallType callType();
     private:
         PredictorEngine& engine;
