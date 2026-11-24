@@ -14,6 +14,7 @@ void Network::loadNetwork(Database& db){
     for(const auto& sdp : db.loadServiceDeliveryPoints()){
         addSdp(sdp);
     }
+    buildIndexes();
 }
 
 void Network::buildIndexes() {
@@ -26,6 +27,54 @@ void Network::buildIndexes() {
     for (const auto& [id, sdp] : delivery_points) {
         sdps_of_point[sdp.getPointId()].push_back(id);
     }
+}
+
+int Network::feederCount() const {
+    return feeders.size();
+}
+
+int Network::servicePointCount() const {
+    return service_points.size();
+}
+
+int Network::sdpCount() const {
+    return delivery_points.size();
+}
+
+int Network::customersUnder(const Outage& outage) const{
+    int count = 0;
+    switch(outage.getType()){
+        case ElementType::ServicePoint:
+            count = sdpsOf(outage.getElementId()).size();
+            break;
+        case ElementType::Feeder:
+            for(const auto& a : servicePointsOf(outage.getElementId())){
+                count += sdpsOf(a).size();
+            }
+            break;
+        default:
+            count = sdpCount();
+            break;
+    }
+    return count;
+}
+
+const std::vector<int>& Network::servicePointsOf(int feederId) const{
+    static const std::vector<int> empty;
+    auto it = points_of_feeder.find(feederId);
+    if (it == points_of_feeder.end()) {
+        return empty;
+    }
+    return it->second;
+}
+
+const std::vector<int>& Network::sdpsOf(int servicePointId) const{
+    static const std::vector<int> empty;
+    auto it = sdps_of_point.find(servicePointId);
+    if (it == sdps_of_point.end()) {
+        return empty;
+    }
+    return it->second;
 }
 
 void Network::setTransformer(const LV_Transformer& t){
@@ -64,4 +113,7 @@ const Service_Delivery_Point& Network::getSdp(int id) const{
         throw std::out_of_range("Service Delivery Point " + std::to_string(id) + " not found in network");
     }
     return it->second;
+}
+const std::unordered_map<int, LV_Feeder>& Network::getFeeders() const {
+    return feeders;
 }
