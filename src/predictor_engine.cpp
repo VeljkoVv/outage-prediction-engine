@@ -159,6 +159,18 @@ void PredictorEngine::confirmOutage(int id) {
     it->second.confirm();
 }
 
+void PredictorEngine::restoreOutage(int id, Outage::TimePoint at) {
+    auto it = outages.find(id);
+    if (it == outages.end()) {
+        throw std::out_of_range("Outage " + std::to_string(id) + " not found");
+    }
+    it->second.restore(at);
+
+    for (int callId : it->second.getCallIds()) {
+        calls.at(callId).close();
+    }
+}
+
 std::optional<int> PredictorEngine::findOpenOutage(ElementType type, int elementId) const {
     for (const auto& [id, outage] : outages) {
         if (outage.isOpen() && outage.getType() == type && outage.getElementId() == elementId) {

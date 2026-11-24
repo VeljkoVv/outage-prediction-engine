@@ -172,7 +172,20 @@ void Menu::confirmOutage(){
 }
 
 void Menu::restorePower(){
-
+    if (engine.openOutageCount() == 0) {
+        std::cout << "\nNo outages to restore" << std::endl;
+        return;
+    }
+    printOutages(true);
+    
+    std::cout << "Type ID to restore (0 to go back): ";
+    int choice;
+    std::cin >> choice;
+    if(choice == 0){
+        return;
+    }
+    engine.restoreOutage(choice, std::chrono::system_clock::now());
+    std::cout << "\nOutage " << choice << " restored." << std::endl;
 }
 
 void Menu::startMenu(){

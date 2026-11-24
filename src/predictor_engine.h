@@ -17,6 +17,7 @@ public:
     int predictedOutageCount() const;
     int openCallCount() const;
     void confirmOutage(int id);
+    void restoreOutage(int id, Outage::TimePoint at);
 
     std::optional<int> findOpenOutage(ElementType type, int elementId) const;
     int createOutage(ElementType type, int elementId, Outage::TimePoint startedAt);
