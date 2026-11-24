@@ -32,6 +32,14 @@ void Outage::takeCallsFrom(const Outage& outage){
     addCall(callId);
   }
 }
+
+void Outage::mergeInto(int parentId) {
+  if (status != OutageStatus::Predicted) {
+    throw std::logic_error("Only a predicted outage can be merged");
+  }
+  status = OutageStatus::Merged;
+  merged_into_id = parentId;
+}
     
 void Outage::confirm(){
   if(status != OutageStatus::Predicted){
@@ -71,6 +79,7 @@ Outage::TimePoint Outage::getStartedAt() const { return started_at; }
 std::optional<Outage::TimePoint> Outage::getEndedAt() const { return ended_at; }
 std::optional<int> Outage::getMergedId() const { return merged_into_id; }
 std::vector<int> Outage::getCallIds() const { return call_ids; }
+std::optional<int> Outage::getMergedIntoId() const { return merged_into_id; }
 
 void Outage::setType(ElementType t) { type = t; }
 void Outage::setElementId(int e) { element_id = e; }

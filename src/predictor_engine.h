@@ -10,6 +10,9 @@ public:
     PredictorEngine(const Network& net);
 
     int onTroubleCall(const Trouble_Call& call);
+    void tryRollUpFeeder(int id);
+    void tryRollUpTransformer();
+
 
     std::optional<int> findOpenOutage(ElementType type, int elementId) const;
     int createOutage(ElementType type, int elementId, Outage::TimePoint startedAt);

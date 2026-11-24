@@ -1,6 +1,10 @@
 #include "predictor_engine.h"
 #include <iostream>
-    
+#include <optional>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
 PredictorEngine::PredictorEngine(const Network& net): network(net) {}
 
 int PredictorEngine::onTroubleCall(const Trouble_Call& call){
@@ -41,7 +45,50 @@ int PredictorEngine::onTroubleCall(const Trouble_Call& call){
     int newId = createOutage(ElementType::ServicePoint, spId, stored.getReceivedAt());
     outages.at(newId).addCall(stored.getId());
     stored.assignTo(newId);
-    return newId;
+
+    tryRollUpFeeder(feederId);
+
+    return stored.getOutageId();
+}
+
+void PredictorEngine::tryRollUpFeeder(int id){
+    std::vector<int> spOutages;
+    for(const auto& a : network.servicePointsOf(id)){
+        std::optional<int> outageId = findOpenOutage(ElementType::ServicePoint, a);
+        if(outageId){
+            spOutages.push_back(*outageId);
+        }
+    }
+    if(spOutages.size() < 2){
+        return;
+    }
+    
+    Outage::TimePoint start = outages.at(spOutages.at(0)).getStartedAt();
+    for (int spOutageId : spOutages) {
+        Outage::TimePoint t = outages.at(spOutageId).getStartedAt();
+        if (t < start) {
+            start = t;
+        }
+    }
+
+    int feederOutageId = createOutage(ElementType::Feeder, id, start);
+    Outage& feederOutage = outages.at(feederOutageId);
+
+    for (int spOutageId : spOutages) {
+        Outage& spOutage = outages.at(spOutageId);
+
+        feederOutage.takeCallsFrom(spOutage);
+        for (int callId : spOutage.getCallIds()) {
+            calls.at(callId).assignTo(feederOutageId);
+        }
+        spOutage.mergeInto(feederOutageId);
+    }
+
+    tryRollUpTransformer();
+}
+
+void PredictorEngine::tryRollUpTransformer(){
+
 }
 
 std::optional<int> PredictorEngine::findOpenOutage(ElementType type, int elementId) const {
