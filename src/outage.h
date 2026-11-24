@@ -23,11 +23,11 @@ class Outage{
         using TimePoint = std::chrono::system_clock::time_point;
         
         Outage();
-        Outage(int id, ElementType type, int element_id,
-        OutageStatus status, TimePoint started_at);
+        Outage(int id, ElementType type, int element_id, TimePoint started_at);
         
         void addCall(int callId);
         void takeCallsFrom(const Outage& outage);
+        void mergeInto(int parentId);
     
         void confirm();
         void restore(TimePoint at);
@@ -35,7 +35,7 @@ class Outage{
 
         bool isOpen() const;
         bool isConfirmed() const;
-
+        
         int getId() const;
         ElementType getType() const;
         int getElementId() const;
@@ -44,6 +44,7 @@ class Outage{
         std::optional<TimePoint> getEndedAt() const;
         std::optional<int> getMergedId() const;
         std::vector<int> getCallIds() const;
+        std::optional<int> getMergedIntoId() const;
 
         void setType(ElementType t);
         void setElementId(int e);

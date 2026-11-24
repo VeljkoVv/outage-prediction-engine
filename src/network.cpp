@@ -28,6 +28,36 @@ void Network::buildIndexes() {
     }
 }
 
+int Network::feederCount() const {
+    return feeders.size();
+}
+
+int Network::servicePointCount() const {
+    return service_points.size();
+}
+
+int Network::sdpCount() const {
+    return delivery_points.size();
+}
+
+const std::vector<int>& Network::servicePointsOf(int feederId) const{
+    static const std::vector<int> empty;
+    auto it = points_of_feeder.find(feederId);
+    if (it == points_of_feeder.end()) {
+        return empty;
+    }
+    return it->second;
+}
+
+const std::vector<int>& Network::sdpsOf(int servicePointId) const{
+    static const std::vector<int> empty;
+    auto it = sdps_of_point.find(servicePointId);
+    if (it == sdps_of_point.end()) {
+        return empty;
+    }
+    return it->second;
+}
+
 void Network::setTransformer(const LV_Transformer& t){
     transformer = t;
 }      
@@ -64,4 +94,7 @@ const Service_Delivery_Point& Network::getSdp(int id) const{
         throw std::out_of_range("Service Delivery Point " + std::to_string(id) + " not found in network");
     }
     return it->second;
+}
+const std::unordered_map<int, LV_Feeder>& Network::getFeeders() const {
+    return feeders;
 }
