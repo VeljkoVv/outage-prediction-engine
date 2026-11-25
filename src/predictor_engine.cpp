@@ -201,3 +201,7 @@ const std::unordered_map<int, Outage>& PredictorEngine::getOutages() const{
 const Outage& PredictorEngine::getOutage(int id) const{
     return outages.at(id);
 }
+
+const Trouble_Call& PredictorEngine::getCall(int id) const {
+    return calls.at(id);
+}

@@ -26,6 +26,7 @@ public:
     const std::vector<int>& getEmergencies() const;
     const std::unordered_map<int, Outage>& getOutages() const;
     const Outage& getOutage(int id) const;
+    const Trouble_Call& getCall(int id) const;
 
 private:
    

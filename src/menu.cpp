@@ -89,7 +89,12 @@ void Menu::troubleCall(){
     CallType t = callType();
     Trouble_Call::TimePoint tp = std::chrono::system_clock::now();
     Trouble_Call call(next_call_id++, dp_id, t, tp);
-    engine.onTroubleCall(call);
+    int outageId = engine.onTroubleCall(call);
+    if (outageId == 0) {
+        out << "Call " << call.getId() << " recorded, no outage." << std::endl;
+    } else {
+        out << "Call " << call.getId() << " assigned to outage " << outageId << "." << std::endl;
+    }
 }
 
 CallType Menu::callType() {
@@ -218,6 +223,17 @@ void Menu::startMenu(){
     out << "\n=======================================================" << std::endl;
     out << "\tSubstation: " << network.getTransformer().getName() << "(" << network.getTransformer().getId() << ")" << std::endl;
     out << "=======================================================" << std::endl;
+    
+    if(engine.getEmergencies().size() > 0){
+        out << "!!! " << engine.getEmergencies().size() << " EMERGENCIES:" << std::endl;
+        for(const auto& a : engine.getEmergencies()){
+            Trouble_Call call = engine.getCall(a);
+            out << "Call " << call.getId() << "\t" << network.getServicePoint(network.getSdp(call.getDeliveryPointId()).getPointId()).getName() << "\t" << network.getSdp(call.getDeliveryPointId()).getName() << std::endl;
+            
+        }
+        out << "-------------------------------------------------------" << std::endl;
+    }
+    
     out << "Feeders: " << network.feederCount() 
               << "\tService points: " << network.servicePointCount()
               << "\tCustomers: " << network.sdpCount() << std::endl;
