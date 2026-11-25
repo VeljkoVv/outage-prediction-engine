@@ -33,6 +33,7 @@ public:
 
     void addOutage(const Outage& o);
     void addTroubleCall(const Trouble_Call& tc);
+    int newCallId();
 
 private:
    
@@ -41,4 +42,5 @@ private:
     std::unordered_map<int, Outage> outages;
     std::vector<int> emergencies;
     int next_outage_id = 1;
+    int next_call_id = 1;
 };

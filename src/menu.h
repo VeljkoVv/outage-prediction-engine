@@ -24,7 +24,6 @@ class Menu{
     private:
         PredictorEngine& engine;
         const Network& network;
-        int next_call_id = 1;
         std::istream& in;
         std::ostream& out;
 };

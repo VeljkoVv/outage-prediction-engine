@@ -22,7 +22,10 @@ class Database{
 
         ElementType toElementType(const std::string& text);
         OutageStatus toStatus(const std::string& text);
+        CallType toCallType(const std::string& text);
+        CallStatus toCallStatus(const std::string& text);
 
+        int maxId(const std::string& table, const std::string& column);
     private:
         sqlite3* db_p = nullptr;
 };

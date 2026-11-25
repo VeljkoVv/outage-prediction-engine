@@ -56,6 +56,7 @@ Trouble_Call::Trouble_Call(int id, int dp_id, CallType t, TimePoint tp)
     Trouble_Call::TimePoint Trouble_Call::getReceivedAt() const { return received_at; }
     CallStatus Trouble_Call::getStatus() const { return status; }
 
+    void Trouble_Call::setId(int value) { id = value; }
     void Trouble_Call::setDeliveryPointId(int value) { delivery_point_id = value; }
     void Trouble_Call::setOutageId(int value) { outage_id = value; }
     void Trouble_Call::setType(CallType value) { type = value; }

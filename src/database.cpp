@@ -158,7 +158,7 @@ std::vector<Outage> Database::loadOutages(){
     std::vector<Outage> outages;
     sqlite3_stmt* stmt = nullptr;
 
-    const char* sql = "SELECT outage_id, type, service_point_id, feeder_id, transformer_id, status, started_at, ended_at, merged_id FROM outage;";
+    const char* sql = "SELECT outage_id, type, service_point_id, feeder_id, transformer_id, status, started_at, ended_at, merged_id FROM outage WHERE status IN ('Predicted', 'Confirmed');";
 
     if (sqlite3_prepare_v2(db_p, sql, -1, &stmt, nullptr) != SQLITE_OK) {
         std::string err = sqlite3_errmsg(db_p);
@@ -201,8 +201,8 @@ std::vector<Outage> Database::loadOutages(){
             outage.setEndedAt(endedAt);
         }
 
-        if (int id = sqlite3_column_type(stmt, 8) != SQLITE_NULL){
-            outage.setMergedInto(id);
+        if (sqlite3_column_type(stmt, 8) != SQLITE_NULL){
+            outage.setMergedInto(sqlite3_column_int(stmt, 8));
         }
 
         outages.push_back(outage);
@@ -215,6 +215,50 @@ std::vector<Outage> Database::loadOutages(){
     }
     sqlite3_finalize(stmt);
     return outages;
+}
+
+std::vector<Trouble_Call> Database::loadTroubleCalls(){
+    std::vector<Trouble_Call> calls;
+    sqlite3_stmt* stmt = nullptr;
+
+    const char* sql = "SELECT call_id, point_id, outage_id, type, received_at, call_status FROM trouble_call WHERE call_status IN ('Open', 'Assigned');";
+
+    if (sqlite3_prepare_v2(db_p, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        std::string err = sqlite3_errmsg(db_p);
+        throw std::runtime_error("Error on query: " + err);
+    }
+
+    int rc;
+    while((rc = sqlite3_step(stmt)) == SQLITE_ROW){
+        Trouble_Call tc;
+        tc.setId(sqlite3_column_int(stmt, 0));
+        tc.setDeliveryPointId(sqlite3_column_int(stmt, 1));
+        tc.setOutageId(sqlite3_column_int(stmt, 2));
+
+        const unsigned char* typeText = sqlite3_column_text(stmt, 3);
+        std::string typeStr = typeText ? reinterpret_cast<const char*>(typeText) : "";
+        CallType type = toCallType(typeStr);
+        tc.setType(type);
+
+        std::time_t secs = static_cast<std::time_t>(sqlite3_column_int64(stmt, 4));
+        Trouble_Call::TimePoint receievedAt = std::chrono::system_clock::from_time_t(secs);
+        tc.setReceivedAt(receievedAt);
+
+        const unsigned char* statusText = sqlite3_column_text(stmt, 5);
+        std::string statusStr = statusText ? reinterpret_cast<const char*>(statusText) : "";
+        CallStatus status = toCallStatus(statusStr);
+        tc.setStatus(status);
+
+        calls.push_back(tc);
+    }
+
+    if (rc != SQLITE_DONE) {
+        std::string err = sqlite3_errmsg(db_p);
+        sqlite3_finalize(stmt);
+        throw std::runtime_error("Error reading rows: " + err);
+    }
+    sqlite3_finalize(stmt);
+    return calls;
 }
 
 ElementType Database::toElementType(const std::string& text) {
@@ -243,8 +287,54 @@ OutageStatus Database::toStatus(const std::string& text) {
     if (text == "Merged") {
         return OutageStatus::Merged;
     }
-    else {
+    if (text == "Cancelled") {
         return OutageStatus::Cancelled;
     }
     throw std::runtime_error("Unknown status: " + text);
+}
+
+CallType Database::toCallType(const std::string& text) {
+    if (text == "NoPower") {
+        return CallType::NoPower;
+    }
+    if (text == "PartialPower") {
+        return CallType::PartialPower;
+    }
+    if (text == "Flickering") {
+        return CallType::Flickering;
+    }
+    if (text == "Hazard") {
+        return CallType::Hazard;
+    }
+    throw std::runtime_error("Unknown call type: " + text);
+}
+
+CallStatus Database::toCallStatus(const std::string& text) {
+    if (text == "Open") {
+        return CallStatus::Open;
+    }
+    if (text == "Assigned") {
+        return CallStatus::Assigned;
+    }
+    if (text == "Closed") {
+        return CallStatus::Closed;
+    }
+    if (text == "Cancelled") {
+        return CallStatus::Cancelled;
+    }
+    throw std::runtime_error("Unknown status: " + text);
+}
+
+int Database::maxId(const std::string& table, const std::string& column) {
+    std::string sql = "SELECT COALESCE(MAX(" + column + "), 0) FROM " + table + ";";
+    sqlite3_stmt* stmt = nullptr;
+    if (sqlite3_prepare_v2(db_p, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        throw std::runtime_error("Error on query: " + std::string(sqlite3_errmsg(db_p)));
+    }
+    int value = 0;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        value = sqlite3_column_int(stmt, 0);
+    }
+    sqlite3_finalize(stmt);
+    return value;
 }

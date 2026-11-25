@@ -88,7 +88,7 @@ void Menu::troubleCall(){
     in >> dp_id;
     CallType t = callType();
     Trouble_Call::TimePoint tp = std::chrono::system_clock::now();
-    Trouble_Call call(next_call_id++, dp_id, t, tp);
+    Trouble_Call call(engine.newCallId(), dp_id, t, tp);
     int outageId = engine.onTroubleCall(call);
     if (outageId == 0) {
         out << "Call " << call.getId() << " recorded, no outage." << std::endl;

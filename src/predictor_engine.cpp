@@ -22,6 +22,9 @@ void PredictorEngine::loadState(Database& db){
             it->second.addCall(tcId);
         }
     }
+
+    next_outage_id = db.maxId("outage", "outage_id") + 1;
+    next_call_id = db.maxId("trouble_call", "call_id") + 1;
 }
 
 void PredictorEngine::addOutage(const Outage& o){
@@ -233,4 +236,8 @@ const Outage& PredictorEngine::getOutage(int id) const{
 
 const Trouble_Call& PredictorEngine::getCall(int id) const {
     return calls.at(id);
+}
+
+int PredictorEngine::newCallId() {
+    return next_call_id++;
 }

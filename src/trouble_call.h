@@ -37,6 +37,7 @@ class Trouble_Call{
         TimePoint getReceivedAt() const;
         CallStatus getStatus() const;
 
+        void setId(int value);
         void setDeliveryPointId(int value);
         void setOutageId(int value);
         void setType(CallType value);
