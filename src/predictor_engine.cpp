@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 PredictorEngine::PredictorEngine(const Network& net): network(net) {}
 
@@ -13,6 +14,9 @@ void PredictorEngine::loadState(Database& db){
     }
     for(const auto& tc : db.loadTroubleCalls()){
         addTroubleCall(tc);
+        if (tc.isEmergency() && tc.getStatus() == CallStatus::Open) {
+            emergencies.push_back(tc.getId());
+        }
     }
 
     for (const auto& [tcId, tc] : calls) {
@@ -213,6 +217,15 @@ void PredictorEngine::restoreOutage(int id, Outage::TimePoint at) {
     for (int callId : it->second.getCallIds()) {
         calls.at(callId).close();
     }
+}
+
+void PredictorEngine::resolveEmergency(int callId) {
+    auto it = std::find(emergencies.begin(), emergencies.end(), callId);
+    if (it == emergencies.end()) {
+        throw std::out_of_range("Call " + std::to_string(callId) + " is not an emergency");
+    }
+    emergencies.erase(it);
+    calls.at(callId).close();
 }
 
 std::optional<int> PredictorEngine::findOpenOutage(ElementType type, int elementId) const {

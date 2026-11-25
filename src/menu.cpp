@@ -17,7 +17,7 @@ void Menu::runMenu(){
         out << "Choice: ";
         int choice;
         in >> choice;
-        while(choice < 0 || choice > 5){
+        while(choice < 0 || choice > 6){
             out << "Invalid option.\n";
             out << "Choice: ";
             in >> choice;
@@ -46,6 +46,9 @@ void Menu::handleChoice(int choice){
                 break;
             case 5:
                 restorePower();
+                break;
+            case 6:
+                fixEmergency();
                 break;
             default:
                 out << "Invalid option.\n";
@@ -222,6 +225,22 @@ void Menu::restorePower(){
     engine.saveState(database);
 }
 
+void Menu::fixEmergency(){
+    if (engine.getEmergencies().empty()) {
+        out << "\nNo emergencies" << std::endl;
+        return;
+    }
+    out << "Type call ID of the handled emergency (0 to go back): ";
+    int choice;
+    in >> choice;
+    if (choice == 0) {
+        return;
+    }
+    engine.resolveEmergency(choice);
+    out << "Emergency for call " << choice << " handled." << std::endl;
+    engine.saveState(database);
+}
+
 void Menu::startMenu(){
     out << "\n=======================================================" << std::endl;
     out << "\tSubstation: " << network.getTransformer().getName() << "(" << network.getTransformer().getId() << ")" << std::endl;
@@ -248,6 +267,7 @@ void Menu::startMenu(){
     out << "3. Show open outages" << std::endl;
     out << "4. Confirm outage" << std::endl;
     out << "5. Restore power" << std::endl;
+    out << "6. Resolve emergency" << std::endl;
     out << "0. Exit" << std::endl;
     out << "-------------------------------------------------------" << std::endl;
 }

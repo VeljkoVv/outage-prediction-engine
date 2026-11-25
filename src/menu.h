@@ -18,6 +18,7 @@ class Menu{
         void showOutages();
         void confirmOutage();
         void restorePower();
+        void fixEmergency();
         std::string outageTag(ElementType type, int id) const;
 
         void printOutages(bool isPredicted);
