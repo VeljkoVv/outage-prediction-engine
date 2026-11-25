@@ -10,7 +10,7 @@ int main(){
 
     net.loadNetwork(db);
     p.loadState(db);
-    Menu m( p, net);
+    Menu m(p, net, db);
     m.runMenu();
 
     return 0;

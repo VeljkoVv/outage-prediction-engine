@@ -19,13 +19,22 @@ class Database{
         std::vector<Service_Delivery_Point> loadServiceDeliveryPoints();
         std::vector<Outage> loadOutages();
         std::vector<Trouble_Call> loadTroubleCalls();
+        
+        void saveCall(const Trouble_Call& call);
+        void saveOutage(const Outage& outage);
 
         ElementType toElementType(const std::string& text);
         OutageStatus toStatus(const std::string& text);
         CallType toCallType(const std::string& text);
         CallStatus toCallStatus(const std::string& text);
+        std::string fromElementType(ElementType type);
+        std::string fromStatus(OutageStatus status);
+        std::string fromCallType(CallType type);
+        std::string fromCallStatus(CallStatus status);
+        long long toSeconds(std::chrono::system_clock::time_point tp);
 
         int maxId(const std::string& table, const std::string& column);
+        void exec(const char* sql);
     private:
         sqlite3* db_p = nullptr;
 };

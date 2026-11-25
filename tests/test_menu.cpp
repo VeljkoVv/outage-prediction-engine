@@ -32,7 +32,8 @@ class MenuTest : public ::testing::Test {
         std::string run(PredictorEngine& engine, const std::string& typed) {
             std::istringstream in(typed);
             std::ostringstream out;
-            Menu menu(engine, net, in, out);
+            Database d(":memory:");
+            Menu menu(engine, net, d, in, out);
             menu.runMenu();
             return out.str();
         }

@@ -27,6 +27,22 @@ void PredictorEngine::loadState(Database& db){
     next_call_id = db.maxId("trouble_call", "call_id") + 1;
 }
 
+void PredictorEngine::saveState(Database& db) {
+    db.exec("BEGIN;");
+    try {
+        for (const auto& [id, outage] : outages) {
+            db.saveOutage(outage);
+        }
+        for (const auto& [id, call] : calls) {
+            db.saveCall(call);
+        }
+        db.exec("COMMIT;");
+    } catch (...) {
+        db.exec("ROLLBACK;");
+        throw;
+    }
+}
+
 void PredictorEngine::addOutage(const Outage& o){
     outages.insert({o.getId(), o});
 }

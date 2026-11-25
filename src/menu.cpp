@@ -7,8 +7,8 @@
 #include <stdexcept>
 
 
-Menu::Menu(PredictorEngine& eng, const Network& net, std::istream& in, std::ostream& out)
-    : engine(eng), network(net), in(in), out(out) {
+Menu::Menu(PredictorEngine& eng, const Network& net, Database& db, std::istream& in, std::ostream& out)
+    : engine(eng), network(net), database(db), in(in), out(out) {
 }
 
 void Menu::runMenu(){
@@ -95,6 +95,7 @@ void Menu::troubleCall(){
     } else {
         out << "Call " << call.getId() << " assigned to outage " << outageId << "." << std::endl;
     }
+    engine.saveState(database);
 }
 
 CallType Menu::callType() {
@@ -200,6 +201,7 @@ void Menu::confirmOutage(){
     }
     engine.confirmOutage(choice);
     out << "Outage " << choice << " confirmed." << std::endl;
+    engine.saveState(database);
 }
 
 void Menu::restorePower(){
@@ -217,6 +219,7 @@ void Menu::restorePower(){
     }
     engine.restoreOutage(choice, std::chrono::system_clock::now());
     out << "\nOutage " << choice << " restored." << std::endl;
+    engine.saveState(database);
 }
 
 void Menu::startMenu(){

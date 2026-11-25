@@ -10,6 +10,7 @@ public:
     PredictorEngine(const Network& net);
 
     void loadState(Database& db);
+    void saveState(Database& db);
 
     int onTroubleCall(const Trouble_Call& call);
     void tryRollUpFeeder(int id);
