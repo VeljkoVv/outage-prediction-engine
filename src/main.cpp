@@ -9,6 +9,7 @@ int main(){
     PredictorEngine p(net);
 
     net.loadNetwork(db);
+    p.loadState(db);
     Menu m( p, net);
     m.runMenu();
 

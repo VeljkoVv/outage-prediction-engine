@@ -81,8 +81,10 @@ std::optional<int> Outage::getMergedId() const { return merged_into_id; }
 std::vector<int> Outage::getCallIds() const { return call_ids; }
 std::optional<int> Outage::getMergedIntoId() const { return merged_into_id; }
 
+void Outage::setId(int i) { id = i; }
 void Outage::setType(ElementType t) { type = t; }
 void Outage::setElementId(int e) { element_id = e; }
 void Outage::setStatus(OutageStatus s) { status = s; }
 void Outage::setStartedAt(TimePoint sa) { started_at = sa; }
 void Outage::setEndedAt(std::optional<TimePoint> ea) { ended_at = ea; }
+void Outage::setMergedInto(std::optional<int> mi) { merged_into_id = mi; }

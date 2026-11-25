@@ -9,6 +9,8 @@ class PredictorEngine {
 public:
     PredictorEngine(const Network& net);
 
+    void loadState(Database& db);
+
     int onTroubleCall(const Trouble_Call& call);
     void tryRollUpFeeder(int id);
     void tryRollUpTransformer();
@@ -25,8 +27,12 @@ public:
     void alertDispatch(int callId);
     const std::vector<int>& getEmergencies() const;
     const std::unordered_map<int, Outage>& getOutages() const;
+    const std::unordered_map<int, Trouble_Call>& getCalls() const;
     const Outage& getOutage(int id) const;
     const Trouble_Call& getCall(int id) const;
+
+    void addOutage(const Outage& o);
+    void addTroubleCall(const Trouble_Call& tc);
 
 private:
    

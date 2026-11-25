@@ -7,6 +7,31 @@
 
 PredictorEngine::PredictorEngine(const Network& net): network(net) {}
 
+void PredictorEngine::loadState(Database& db){
+    for(const auto& o : db.loadOutages()){
+        addOutage(o);
+    }
+    for(const auto& tc : db.loadTroubleCalls()){
+        addTroubleCall(tc);
+    }
+
+    for (const auto& [tcId, tc] : calls) {
+        int outageId = tc.getOutageId();
+        auto it = outages.find(outageId);
+        if (it != outages.end()) {
+            it->second.addCall(tcId);
+        }
+    }
+}
+
+void PredictorEngine::addOutage(const Outage& o){
+    outages.insert({o.getId(), o});
+}
+
+void PredictorEngine::addTroubleCall(const Trouble_Call& tc){
+    calls.insert({tc.getId(), tc});
+}
+
 int PredictorEngine::onTroubleCall(const Trouble_Call& call){
     int spId = network.getSdp(call.getDeliveryPointId()).getPointId();
     int feederId = network.getServicePoint(spId).getFeederId();
@@ -196,6 +221,10 @@ const std::vector<int>& PredictorEngine::getEmergencies() const {
 
 const std::unordered_map<int, Outage>& PredictorEngine::getOutages() const{
     return outages;
+}
+
+const std::unordered_map<int, Trouble_Call>& PredictorEngine::getCalls() const{
+    return calls;
 }
 
 const Outage& PredictorEngine::getOutage(int id) const{

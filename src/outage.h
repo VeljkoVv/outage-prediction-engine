@@ -46,11 +46,13 @@ class Outage{
         std::vector<int> getCallIds() const;
         std::optional<int> getMergedIntoId() const;
 
+        void setId(int i);
         void setType(ElementType t);
         void setElementId(int e);
         void setStatus(OutageStatus s);
         void setStartedAt(TimePoint sa);
         void setEndedAt(std::optional<TimePoint> sa);
+        void setMergedInto(std::optional<int> mi);
 
     private:
         int id;
