@@ -8,12 +8,12 @@
       received_at(std::chrono::system_clock::now()),
       status(CallStatus::Open){}
 
-Trouble_Call::Trouble_Call(int id, int dp_id, CallType t, TimePoint tp, CallStatus s)
+Trouble_Call::Trouble_Call(int id, int dp_id, CallType t, TimePoint tp)
     : id(id),
       delivery_point_id(dp_id),
       type(t),
       received_at(tp),
-      status(s) {}
+      status(CallStatus::Open) {}
 
     void Trouble_Call::assignTo(int outageId){
       if(!isOpen()){

@@ -6,7 +6,7 @@
 class LV_Transformer{
     public:
         LV_Transformer();
-        LV_Transformer(int id, std::string& name);        
+        LV_Transformer(int id, std::string& name);       
 
         void setId(int id);
         void setName(const std::string& name);

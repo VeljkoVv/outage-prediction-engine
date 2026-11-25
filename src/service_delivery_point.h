@@ -7,7 +7,6 @@ class Service_Delivery_Point{
     public:
         Service_Delivery_Point();
         Service_Delivery_Point(int id, std::string& name, std::string& adress);
-        Service_Delivery_Point(const Service_Delivery_Point& points);
 
         void setId(int id);
         void setPointId(int id);
