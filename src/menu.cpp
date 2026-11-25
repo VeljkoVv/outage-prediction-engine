@@ -4,20 +4,23 @@
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include <stdexcept>
 
 
-Menu::Menu(PredictorEngine& eng, const Network& net) : engine(eng), network(net) {}
+Menu::Menu(PredictorEngine& eng, const Network& net, std::istream& in, std::ostream& out)
+    : engine(eng), network(net), in(in), out(out) {
+}
 
 void Menu::runMenu(){
     while (true) {
         startMenu();
-        std::cout << "Choice: ";
+        out << "Choice: ";
         int choice;
-        std::cin >> choice;
+        in >> choice;
         while(choice < 0 || choice > 5){
-            std::cout << "Invalid option.\n";
-            std::cout << "Choice: ";
-            std::cin >> choice;
+            out << "Invalid option.\n";
+            out << "Choice: ";
+            in >> choice;
         }
         if (choice == 0) {
             break;
@@ -45,11 +48,11 @@ void Menu::handleChoice(int choice){
                 restorePower();
                 break;
             default:
-                std::cout << "Invalid option.\n";
+                out << "Invalid option.\n";
                 break;
         }
     } catch (const std::exception& e) {
-        std::cout << "Error: " << e.what() << '\n';
+        out << "Error: " << e.what() << '\n';
     }
 }
 
@@ -61,28 +64,28 @@ std::string Menu::outageTag(ElementType type, int id) const {
 }
 
 void Menu::showNetwork(){
-    std::cout << network.getTransformer().getName() << " (" << network.getTransformer().getId() << ")" 
+    out << network.getTransformer().getName() << " (" << network.getTransformer().getId() << ")" 
                                                     << outageTag(ElementType::Transformer, network.getTransformer().getId()) << std::endl;
 
     for (const auto& [feederId, feeder] : network.getFeeders()) {
-        std::cout << " \t" << feeder.getName() << " (" << feederId << ")" 
+        out << " \t" << feeder.getName() << " (" << feederId << ")" 
                            << outageTag(ElementType::Feeder, feederId) << std::endl;
 
         for (int spId : network.servicePointsOf(feederId)) {
-            std::cout << "\t\t" << network.getServicePoint(spId).getName() << " (" << spId << ")" 
+            out << "\t\t" << network.getServicePoint(spId).getName() << " (" << spId << ")" 
                                 << outageTag(ElementType::ServicePoint, spId) << std::endl;
             for (int sdpId : network.sdpsOf(spId)) {
-                std::cout << "\t\t\t" << network.getSdp(sdpId).getName() << " (" << sdpId << ")" << std::endl;
+                out << "\t\t\t" << network.getSdp(sdpId).getName() << " (" << sdpId << ")" << std::endl;
             }
         }
     }
 }
 void Menu::troubleCall(){
-    std::cout << "-------------------------------------------------------" << std::endl;
-    std::cout << "Trouble call: " << std::endl;
+    out << "-------------------------------------------------------" << std::endl;
+    out << "Trouble call: " << std::endl;
     int dp_id;
-    std::cout << "\nDelivery point id: " << std::endl;
-    std::cin >> dp_id;
+    out << "\nDelivery point id: " << std::endl;
+    in >> dp_id;
     CallType t = callType();
     Trouble_Call::TimePoint tp = std::chrono::system_clock::now();
     Trouble_Call call(next_call_id++, dp_id, t, tp);
@@ -90,7 +93,7 @@ void Menu::troubleCall(){
 }
 
 CallType Menu::callType() {
-    std::cout << "\nCall type:\n"
+    out << "\nCall type:\n"
               << "1. No power\n"
               << "2. Partial power\n"
               << "3. Flickering\n"
@@ -98,8 +101,10 @@ CallType Menu::callType() {
 
     int choice = 0;
     while (choice < 1 || choice > 4) {
-        std::cout << "Choice: ";
-        std::cin >> choice;
+        out << "Choice: ";
+        if (!(in >> choice)) {
+            throw std::runtime_error("Invalid input");
+        }
     }
 
     switch (choice) {
@@ -116,7 +121,7 @@ CallType Menu::callType() {
 
 void Menu::showOutages(){
     if(engine.openOutageCount() == 0){
-        std::cout << "\nNo open outages" << std::endl;
+        out << "\nNo open outages" << std::endl;
         return;
     }
     printOutages(false);
@@ -129,8 +134,8 @@ void Menu::printOutages(bool isPredicted){
     } else{
         count = engine.openOutageCount();
     }
-    std::cout << "--- Outages (" << count << ") ---" << std::endl;
-    std::cout << "ID \tElement \t\tStatus \t\tCalls \tCustomers \tStarted at" << std::endl;
+    out << "--- Outages (" << count << ") ---" << std::endl;
+    out << "ID \tElement \t\tStatus \t\tCalls \tCustomers \tStarted at" << std::endl;
     for(const auto& [id, outage] : engine.getOutages()){
         if (!outage.isOpen()) {
             continue;
@@ -138,38 +143,38 @@ void Menu::printOutages(bool isPredicted){
         if (isPredicted && outage.getStatus() != OutageStatus::Predicted) {
             continue;
         }
-        std::cout << outage.getId();
+        out << outage.getId();
             switch(outage.getType()){
                 case ElementType::ServicePoint:
-                    std::cout << "\tService Point ";
+                    out << "\tService Point ";
                     break;
                 case ElementType::Feeder:
-                    std::cout << "\tFeeder ";
+                    out << "\tFeeder ";
                     break;
                 default:
-                    std::cout << "\tTransformer ";
+                    out << "\tTransformer ";
                     break;
             }
-        std::cout << outage.getElementId();
+        out << outage.getElementId();
         switch(outage.getStatus()){
             case OutageStatus::Cancelled:
-                std::cout << "\tCancelled";
+                out << "\tCancelled";
                 break;
             case OutageStatus::Confirmed:
-                std::cout << "\tConfirmed";
+                out << "\tConfirmed";
                 break;
             case OutageStatus::Merged:
-                std::cout << "\tMerged";
+                out << "\tMerged";
                 break;
             case OutageStatus::Predicted:
-                std::cout << "\tPredicted";
+                out << "\tPredicted";
                 break;
             default:
-                std::cout << "\tRestored";
+                out << "\tRestored";
                 break;
         }
         std::time_t start = std::chrono::system_clock::to_time_t(outage.getStartedAt());
-        std::cout << "\t" << outage.getCallIds().size() 
+        out << "\t" << outage.getCallIds().size() 
                   << "\t" << network.customersUnder(outage) 
                   << "\t\t" << std::put_time(std::localtime(&start), "%H:%M") << std::endl;
     }
@@ -177,53 +182,53 @@ void Menu::printOutages(bool isPredicted){
 
 void Menu::confirmOutage(){
     if (engine.predictedOutageCount() == 0) {
-        std::cout << "\nNo outages to confirm" << std::endl;
+        out << "\nNo outages to confirm" << std::endl;
         return;
     }
     printOutages(true);
     
-    std::cout << "Type ID to confirm (0 to go back): ";
+    out << "Type ID to confirm (0 to go back): ";
     int choice;
-    std::cin >> choice;
+    in >> choice;
     if(choice == 0){
         return;
     }
     engine.confirmOutage(choice);
-    std::cout << "Outage " << choice << " confirmed." << std::endl;
+    out << "Outage " << choice << " confirmed." << std::endl;
 }
 
 void Menu::restorePower(){
     if (engine.openOutageCount() == 0) {
-        std::cout << "\nNo outages to restore" << std::endl;
+        out << "\nNo outages to restore" << std::endl;
         return;
     }
-    printOutages(true);
+    printOutages(false);
     
-    std::cout << "Type ID to restore (0 to go back): ";
+    out << "Type ID to restore (0 to go back): ";
     int choice;
-    std::cin >> choice;
+    in >> choice;
     if(choice == 0){
         return;
     }
     engine.restoreOutage(choice, std::chrono::system_clock::now());
-    std::cout << "\nOutage " << choice << " restored." << std::endl;
+    out << "\nOutage " << choice << " restored." << std::endl;
 }
 
 void Menu::startMenu(){
-    std::cout << "\n=======================================================" << std::endl;
-    std::cout << "\tSubstation: " << network.getTransformer().getName() << "(" << network.getTransformer().getId() << ")" << std::endl;
-    std::cout << "=======================================================" << std::endl;
-    std::cout << "Feeders: " << network.feederCount() 
+    out << "\n=======================================================" << std::endl;
+    out << "\tSubstation: " << network.getTransformer().getName() << "(" << network.getTransformer().getId() << ")" << std::endl;
+    out << "=======================================================" << std::endl;
+    out << "Feeders: " << network.feederCount() 
               << "\tService points: " << network.servicePointCount()
               << "\tCustomers: " << network.sdpCount() << std::endl;
-    std::cout << "Open outages: " << engine.openOutageCount()
+    out << "Open outages: " << engine.openOutageCount()
               << "\tOpen calls: " << engine.openCallCount() << std::endl;
-    std::cout << "-------------------------------------------------------" << std::endl;
-    std::cout << "1. Show network" << std::endl;
-    std::cout << "2. New trouble call" << std::endl;
-    std::cout << "3. Show open outages" << std::endl;
-    std::cout << "4. Confirm outage" << std::endl;
-    std::cout << "5. Restore power" << std::endl;
-    std::cout << "0. Exit" << std::endl;
-    std::cout << "-------------------------------------------------------" << std::endl;
+    out << "-------------------------------------------------------" << std::endl;
+    out << "1. Show network" << std::endl;
+    out << "2. New trouble call" << std::endl;
+    out << "3. Show open outages" << std::endl;
+    out << "4. Confirm outage" << std::endl;
+    out << "5. Restore power" << std::endl;
+    out << "0. Exit" << std::endl;
+    out << "-------------------------------------------------------" << std::endl;
 }
