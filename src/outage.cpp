@@ -10,11 +10,11 @@ Outage::Outage()
       started_at(std::chrono::system_clock::now()){}
 
 Outage::Outage(int id, ElementType type, int element_id,
-               OutageStatus status, TimePoint started_at)
+               TimePoint started_at)
     : id(id),
       type(type),
       element_id(element_id),
-      status(status),
+      status(OutageStatus::Predicted),
       started_at(started_at){}
 
 void Outage::addCall(int callId){
@@ -31,6 +31,14 @@ void Outage::takeCallsFrom(const Outage& outage){
   for (int callId : outage.getCallIds()) {
     addCall(callId);
   }
+}
+
+void Outage::mergeInto(int parentId) {
+  if (status != OutageStatus::Predicted) {
+    throw std::logic_error("Only a predicted outage can be merged");
+  }
+  status = OutageStatus::Merged;
+  merged_into_id = parentId;
 }
     
 void Outage::confirm(){
@@ -71,9 +79,12 @@ Outage::TimePoint Outage::getStartedAt() const { return started_at; }
 std::optional<Outage::TimePoint> Outage::getEndedAt() const { return ended_at; }
 std::optional<int> Outage::getMergedId() const { return merged_into_id; }
 std::vector<int> Outage::getCallIds() const { return call_ids; }
+std::optional<int> Outage::getMergedIntoId() const { return merged_into_id; }
 
+void Outage::setId(int i) { id = i; }
 void Outage::setType(ElementType t) { type = t; }
 void Outage::setElementId(int e) { element_id = e; }
 void Outage::setStatus(OutageStatus s) { status = s; }
 void Outage::setStartedAt(TimePoint sa) { started_at = sa; }
 void Outage::setEndedAt(std::optional<TimePoint> ea) { ended_at = ea; }
+void Outage::setMergedInto(std::optional<int> mi) { merged_into_id = mi; }
