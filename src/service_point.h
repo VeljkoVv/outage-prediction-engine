@@ -7,7 +7,6 @@ class Service_Point{
     public:
         Service_Point();
         Service_Point(int id, std::string& name);
-        Service_Point(const Service_Point& point);
 
         void setId(int id);
         void setFeederId(int id);

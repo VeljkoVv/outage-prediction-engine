@@ -3,7 +3,6 @@
 
 Service_Point::Service_Point() {}
 Service_Point::Service_Point(int id, std::string& name) : point_id(id), point_name(name) {}
-Service_Point::Service_Point(const Service_Point& point) : point_id(point.point_id), point_name(point.point_name) {}
 
 void Service_Point::setId(int id) {point_id = id;}
 void Service_Point::setFeederId(int id) {feeder_id = id;}

@@ -20,8 +20,8 @@ class Trouble_Call{
         using TimePoint = std::chrono::system_clock::time_point;
 
         Trouble_Call();
-        Trouble_Call(int id, int dp_id, CallType t,TimePoint tp, CallStatus s);
-        
+        Trouble_Call(int id, int dp_id, CallType t,TimePoint tp);
+
         void assignTo(int outageId);
         void close();
         void cancel();
@@ -37,6 +37,7 @@ class Trouble_Call{
         TimePoint getReceivedAt() const;
         CallStatus getStatus() const;
 
+        void setId(int value);
         void setDeliveryPointId(int value);
         void setOutageId(int value);
         void setType(CallType value);
